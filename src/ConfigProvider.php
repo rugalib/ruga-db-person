@@ -2,26 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Ruga\Skeleton;
+namespace Ruga\Person;
 
+use Ruga\Db\Schema\Updater;
+use Ruga\Person\Container\PersonTableFactory;
 
-/**
- * ConfigProvider.
- *
- * @see    https://docs.mezzio.dev/mezzio/v3/features/container/config/
- */
 class ConfigProvider
 {
     public function __invoke()
     {
         return [
-            'dependencies' => [
-                'services' => [],
-                'aliases' => [],
-                'factories' => [],
-                'invokables' => [],
-                'delegators' => [],
+            'db' => [
+                Updater::class => [
+                    'components' => [
+                        Person::class => [
+                            Updater::CONF_REQUESTED_VERSION => 8,
+                            Updater::CONF_SCHEMA_DIRECTORY => __DIR__ . '/../ruga-dbschema-person',
+                        ]
+                    ]
+                ],
             ],
+            'dependencies' => [
+                'factories' => [
+                    PersonTable::class => PersonTableFactory::class,
+                ]
+            ]
         ];
     }
 }
